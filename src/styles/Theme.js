@@ -1,10 +1,7 @@
 import { css } from 'styled-components'
 
 const theme = {
-  black: '#000000',
-  white: '#FFFFFF',
   border: '#717171',
-  hover: '#fb0',
 
   flex: (direction = 'row', justify = 'center', align = 'center') => `
     display: flex;
@@ -22,8 +19,13 @@ const theme = {
   `,
 
   headerFont: css`
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 700;
+  `,
+
+  titleFont: css`
+    font-size: 24px;
+    font-weight: 500;
   `,
 
   normalFont: css`

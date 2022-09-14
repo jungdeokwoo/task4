@@ -1,9 +1,11 @@
-import { createContext, useContext } from 'react'
+import { createContext, useState } from 'react'
 
 const GithubContext = createContext(null)
 
-export const useIssues = () => useContext(GithubContext)
+const IssueProvider = ({ children }) => {
+  const [IssueLists, setIssueLists] = useState([])
 
-export function IssueProvider({}) {
-  return <GithubContext.Provider></GithubContext.Provider>
+  return <GithubContext.Provider value={IssueLists}>{children}</GithubContext.Provider>
 }
+
+export default IssueProvider
