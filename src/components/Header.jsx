@@ -17,6 +17,7 @@ const IssueHeader = styled.header`
   top: 0;
   width: 100%;
   height: 100px;
+  background-color: white;
 `
 
 const HeaderTitle = styled.p`
