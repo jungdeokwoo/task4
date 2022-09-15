@@ -5,7 +5,7 @@ import IssueList from './components/IssueList'
 const Issue = () => {
   return (
     <IssueContainer>
-      <IssueList></IssueList>
+      <IssueList />
     </IssueContainer>
   )
 }
