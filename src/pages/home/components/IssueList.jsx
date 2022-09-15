@@ -1,24 +1,16 @@
-import React, { useContext, useRef, useEffect } from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
 import IssueItem from './IssueItem'
 import { GithubContext } from 'context/GithubContext'
+import useIntersection from 'hook/useIntersection'
 
-const IssueList = ({ currentPage }) => {
+const IssueList = ({ currentPage, setCurrentPage }) => {
   const { issueLists, isLoading, getLists, isLastPage, isError } = useContext(GithubContext)
-  const observerTarget = useRef(null)
 
-  useEffect(() => {
+  const observeElement = useIntersection(() => {
     if (isLastPage || isError) return
-    const bottomWindow = new IntersectionObserver(
-      entries => {
-        if (entries[0].isIntersecting) {
-          getLists(currentPage.current)
-          currentPage.current++
-        }
-      },
-      { threshold: 0.7 },
-    )
-    observerTarget.current && bottomWindow.observe(observerTarget.current)
+    getLists(currentPage)
+    setCurrentPage(prev => prev + 1)
   })
 
   return (
@@ -35,7 +27,7 @@ const IssueList = ({ currentPage }) => {
           />
         </IssueItemContainer>
       ))}
-      {!isLoading && <InfinityScrollDiv ref={observerTarget} />}
+      {!isLoading && <InfinityScrollDiv ref={observeElement} />}
     </>
   )
 }

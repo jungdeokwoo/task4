@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import IssueList from './components/IssueList'
 import IssueListLoading from './components/IssueListLoading'
@@ -6,11 +6,11 @@ import IssueListError from './components/IssueListError'
 import IssueListLastPageMessage from './components/IssueListLastPageMessage'
 
 const Issue = () => {
-  const currentPage = useRef(1)
+  const [currentPage, setCurrentPage] = useState(1)
 
   return (
     <IssueContainer>
-      <IssueList currentPage={currentPage} />
+      <IssueList currentPage={currentPage} setCurrentPage={setCurrentPage} />
       <IssueListLoading />
       <IssueListError />
       <IssueListLastPageMessage />
