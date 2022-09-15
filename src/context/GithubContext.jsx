@@ -1,27 +1,44 @@
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useRef, useState } from 'react'
 import getIssueLists from 'api'
 
 export const GithubContext = createContext(null)
 
 const IssueProvider = ({ children }) => {
-  const [IssueLists, setIssueLists] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
+  const [issueLists, setIssueLists] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState('')
+  const currentPage = useRef(1)
 
   useEffect(() => {
-    getIssueLists(currentPage).then(res => {
-      setIssueLists(
-        res.data.map(issueList => ({
-          id: issueList.id,
-          title: issueList.title,
-          user: issueList.user.login,
-          created: issueList.created_at,
-          number: issueList.number,
-        })),
-      )
-    })
-  }, [])
+    const errorTimer = setTimeout(() => {
+      setIsError('')
+    }, 3000)
+    return () => clearTimeout(errorTimer)
+  }, [isError])
 
-  return <GithubContext.Provider value={IssueLists}>{children}</GithubContext.Provider>
+  const getLists = async () => {
+    setIsLoading(true)
+    try {
+      const response = await getIssueLists(currentPage.current)
+      if (response.data.length === 0) {
+        currentPage.current = 'lastPage'
+        setIsLoading(false)
+        return
+      }
+      setIsLoading(false)
+      setIssueLists(prev => [...prev, ...response.data])
+      currentPage.current++
+    } catch (error) {
+      setIsError('네트워크가 불안정합니다 다시 시도해주세요')
+      currentPage.current = 'errorPage'
+    }
+  }
+
+  return (
+    <GithubContext.Provider value={{ issueLists, currentPage, getLists, isLoading, isError }}>
+      {children}
+    </GithubContext.Provider>
+  )
 }
 
 export default IssueProvider
