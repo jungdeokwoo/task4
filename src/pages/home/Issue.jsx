@@ -1,11 +1,19 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
 import IssueList from './components/IssueList'
+import IssueListLoading from './components/IssueListLoading'
+import IssueListError from './components/IssueListError'
+import IssueListLastPageMessage from './components/IssueListLastPageMessage'
 
 const Issue = () => {
+  const currentPage = useRef(1)
+
   return (
     <IssueContainer>
-      <IssueList />
+      <IssueList currentPage={currentPage} />
+      <IssueListLoading />
+      <IssueListError />
+      <IssueListLastPageMessage />
     </IssueContainer>
   )
 }
