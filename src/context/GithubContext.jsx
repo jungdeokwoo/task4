@@ -1,4 +1,4 @@
-import { createContext, useEffect, useRef, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import getIssueLists from 'api'
 
 export const GithubContext = createContext(null)
@@ -7,7 +7,7 @@ const IssueProvider = ({ children }) => {
   const [issueLists, setIssueLists] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [isError, setIsError] = useState('')
-  const currentPage = useRef(1)
+  const [isLastPage, setIsLastPage] = useState(false)
 
   useEffect(() => {
     const errorTimer = setTimeout(() => {
@@ -16,26 +16,25 @@ const IssueProvider = ({ children }) => {
     return () => clearTimeout(errorTimer)
   }, [isError])
 
-  const getLists = async () => {
+  const getLists = async nextPage => {
     setIsLoading(true)
     try {
-      const response = await getIssueLists(currentPage.current)
+      const response = await getIssueLists(nextPage)
       if (response.data.length === 0) {
-        currentPage.current = 'lastPage'
-        setIsLoading(false)
+        setIsLastPage(true)
         return
       }
-      setIsLoading(false)
       setIssueLists(prev => [...prev, ...response.data])
-      currentPage.current++
     } catch (error) {
       setIsError('네트워크가 불안정합니다 다시 시도해주세요')
-      currentPage.current = 'errorPage'
+      setIsLastPage(true)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
-    <GithubContext.Provider value={{ issueLists, currentPage, getLists, isLoading, isError }}>
+    <GithubContext.Provider value={{ issueLists, getLists, isLoading, isError, isLastPage }}>
       {children}
     </GithubContext.Provider>
   )
